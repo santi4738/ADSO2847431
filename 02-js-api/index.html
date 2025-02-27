@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02- Javascript (API)</title>
+    <link rel="stylesheet" href="../css/master.css">
+    <style>
+        section.characters {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            margin: 4rem 0 5rem 0;
+            gap: 1 rem;
+
+            div.character {
+                border: 4px solid #fff;
+                border-radius: 6px;
+                position: relative;
+                overflow: hidden;
+                height: 220px;
+                width: 220px;
+
+                article,
+                img {
+                    position: absolute;
+                }
+
+                article {
+                    background-color: #000c;
+                    z-index: 1;
+                    bottom: -100px;
+                    padding: 0.4rem;
+                    transition: bottom 0.4s ease-in;
+                    width: 100%;
+
+                    h4,
+                    h5 {
+                        color: #fff;
+                    }
+
+                    .Alive {
+                        color: #adff2f;
+                    }
+
+                    .Dead {
+                        color: #dc143c;
+                    }
+
+                    button.btn-show {
+                        border: none;
+                        border-radius: 20px;
+                        cursor: pointer;
+                        padding: 0.1rem 0.4rem;
+                        transition: transform 0.2s ease-in;
+                        font-size: 0.8rem;
+
+                        &:hover {
+                            transform: scale(1.15);
+                        }
+                    }
+                }
+
+                &:hover article {
+                    bottom: 0;
+                }
+
+                img {
+                    object-fit: cover;
+                }
+
+            }
+        }
+
+        @media screen and (max-width: 1180px) {
+            section.characters {
+                grid-template-columns: repeat(4, 220px);
+            }
+
+        }
+
+        @media screen and (max-width: 968px) {
+            section.characters {
+                grid-template-columns: repeat(3, 220px);
+            }
+
+        }
+
+        @media screen and (max-width: 700px) {
+            section.characters {
+                grid-template-columns: repeat(2, 220px);
+            }
+
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+            display: flex;
+            gap: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-image {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-image img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        .modal-info {
+            flex: 2;
+            color: #333;
+        }
+
+        .modal-info h2 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #222;
+        }
+
+        .modal-info p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .modal-info p strong {
+            color: #000;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body class="level3">
+    <nav>
+        <a href="../index.html">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                <path fill="#ffffff"
+                    d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
+            </svg>
+
+        </a>
+    </nav>
+    <main>
+        <header>
+            <h1>02- Javascript (API)</h1>
+            <h2>Consumir servicio por medio de JS</h2>
+        </header>
+        <section class="characters">
+
+        </section>
+    </main>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-image">
+                <img id="modalImage" src="" alt="Character Image">
+            </div>
+            <div class="modal-info">
+                <h2 id="modalName"></h2>
+                <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+                <p><strong>Species:</strong> <span id="modalSpecies"></span></p>
+                <p><strong>Gender:</strong> <span id="modalGender"></span></p>
+                <p><strong>Origin:</strong> <span id="modalOrigin"></span></p>
+                <p><strong>Location:</strong> <span id="modalLocation"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Elements
+        const characters = document.querySelector('.characters')
+        const modal = document.getElementById('myModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalName = document.getElementById('modalName');
+        const modalStatus = document.getElementById('modalStatus');
+        const modalSpecies = document.getElementById('modalSpecies');
+        const modalGender = document.getElementById('modalGender');
+        const modalOrigin = document.getElementById('modalOrigin');
+        const modalLocation = document.getElementById('modalLocation');
+        const span = document.getElementsByClassName("close")[0];
+
+        // Fetch All Characters
+        const fetchCaracters = async () => {
+            for (let i = 1; i <= 20; i++) {
+                const url = 'https://rickandmortyapi.com/api/character/' + i
+                await fetch(url)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        characters.innerHTML += '<div class="character"> \
+                    <article> \
+                        <h4>'+ data.name + '</h4> \
+                        <h5 class="'+ data.status + '">' + data.status + '</h5> \
+                        <button class="btn-show" data-id="'+data.id+'"> + info </button> \
+                    </article> \
+                    <img src="'+ data.image + '"> \
+                    </div>'
+                    })
+            }
+            addClickEvents()
+        }
+
+        function addClickEvents() {
+            const btnsShow = document.querySelectorAll('.btn-show')
+
+            btnsShow.forEach(element => {
+                element.addEventListener('click', function () {
+                    const characterId = this.getAttribute('data-id')
+                    fetchCharacterDetails(characterId)
+                })
+            })
+        }
+
+        function fetchCharacterDetails(id) {
+            const url = 'https://rickandmortyapi.com/api/character/' + id
+            fetch(url)
+                .then((response) => response.json())
+                .then((data) => {
+                    modalImage.src = data.image;
+                    modalName.textContent = data.name;
+                    modalStatus.textContent = data.status;
+                    modalSpecies.textContent = data.species;
+                    modalGender.textContent = data.gender;
+                    modalOrigin.textContent = data.origin.name;
+                    modalLocation.textContent = data.location.name;
+                    modal.style.display = "block";
+                })
+        }
+
+        // Close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        // Close the modal when clicking outside of it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        fetchCaracters()
+    </script>
+</body>
+
+</html>
