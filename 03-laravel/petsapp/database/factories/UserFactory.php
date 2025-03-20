@@ -22,23 +22,24 @@ class UserFactory extends Factory
      * @return array<string, mixed>
      */
     public function definition(): array
-    {
-        return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
-        ];
-    }
+{
+    $gender = fake()->randomElement(array('Female', 'Male'));
+    $name = ($gender == 'Female') ? fake()->firstNameFemale() : fake()->firstNameMale();
+    ($gender == 'Female') ? $g = 'girl' : $g = 'boy';
+    $id = fake()->numerify('75#######');
+    copy('https://avatar.iran.liara.run/public/' . $g, public_path('images/' . $id . '.png'));
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
-    }
+    return [
+        'document'           => $id,
+        'fullname'           => $name . " " . fake()->lastName(),
+        'gender'             => $gender,
+        'birthdate'          => fake()->dateTimeBetween('1974-01-01', '2004-12-31'),
+        'photo'              => $id . '.png',
+        'email'              => fake()->unique()->safeEmail(),
+        'phone'              => fake()->numerify('320#######'),
+        'email_verified_at'  => now(),
+        'password'           => static::$password ??= Hash::make('12345'),
+        'remember_token'     => Str::random(10),
+    ];
+}
 }
