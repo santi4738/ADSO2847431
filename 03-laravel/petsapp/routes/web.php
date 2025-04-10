@@ -66,7 +66,13 @@ Route::get('view/blade', function () {
         ->with('title', $title)
         ->with('pets', $pets);
         
-});                         
+}); 
+
+Route::get('show/pet/id/{id}', function ($id) {
+    $pet = App\Models\Pet::find($id);
+    return view('show-pet')->with('pet', $pet);
+});
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');

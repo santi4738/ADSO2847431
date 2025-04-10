@@ -1,3 +1,4 @@
+{{--
 <x-guest-layout>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
@@ -45,3 +46,24 @@
         </div>
     </form>
 </x-guest-layout>
+--}}
+
+@extends('layouts.app')
+@section('title', 'Login - Pets App')
+@section('content')
+<fieldset class="fieldset w-xs bg-base-200 border border-base-300 p-4 rounded-box">
+    <h1 class="text-2xl text-center flex justify-center items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+            <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd" />
+        </svg>
+        Login         
+    </h1>
+    <label class="fieldset-label">Email</label>
+    <input type="email" class="input" placeholder="Email" />
+    
+    <label class="fieldset-label">Password</label>
+    <input type="password" class="input" placeholder="Password" />
+    
+    <button class="btn btn-neutral mt-4 rounded-full text-white bg-cyan-800">Login</button>
+  </fieldset>
+@endsection
