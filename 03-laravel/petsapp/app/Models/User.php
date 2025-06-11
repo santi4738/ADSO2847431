@@ -18,9 +18,15 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'document',
+        'fullname',
+        'gender',
+        'birthdate',
+        'photo',
+        'phone',
         'email',
-        'password'
+        'password',
+        'role'
     ];
 
     /**
@@ -29,15 +35,8 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $hidden = [
-        'document',
-        'fullname',
-        'gender',
-        'birthdate',
-        'photo',
-        'phone',
-        'email',      
         'password',
-        'role'
+        'remember_token',
     ];
 
     /**
@@ -52,9 +51,11 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-//Relationship: User hasMany Adoptions
-public function adoptions() {
-    return $this->hasMany(Adoption::class);
-}
-    
+
+
+    // RelationShip: User hasMany Adoptions
+    public function adoptions() {
+        return $this->hasMany(Adoption::class);
+    }
+
 }

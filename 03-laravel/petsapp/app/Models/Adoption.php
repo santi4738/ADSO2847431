@@ -10,12 +10,13 @@ class Adoption extends Model
         'user_id',
         'pet_id'
     ];
-    //Relationship: Adoption belongsTo User
+
+    // RelationShip: Adoption belongsTo User
     public function user() {
-        return $this->belongsTo(user::class);
+        return $this->belongsTo(User::class);
     }
-    //Relationship: Adoption belongsTo Pet
+    // RelationShip: Adoption belongsTo Pet
     public function pet() {
-        return $this->belongsTo(pet::class);
+        return $this->belongsTo(Pet::class);
     }
 }

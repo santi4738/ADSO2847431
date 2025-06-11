@@ -3,85 +3,99 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Models\User as User;
-use App\Models\Pet as Pet;
-use Carbon\Carbon;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+use App\Http\Controllers\UserController;
+//use App\Http\Controllers\PetController;
+//use App\Http\Controllers\AdoptionController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 // List All Users (Factory Challenge)
-Route::get('show/users', function () {
+Route::get('show/users', function() {
     $users = User::all();
+    //dd($users->toArray());
     return view('users-factory')->with('users', $users);
 });
 
-Route::get('hello', function () {
-    return "<h1>Hello Laravel 😀</h1>";    
+Route::get('hello', function() {
+    //echo "Hello from Laravel";
+    return "<h1>Hello Laravel ❤️</h1>";
 })->name('hello');
 
-Route::get('show/pets', function () {
-    $pets = Pet::all();
+Route::get('show/pets', function() {
+    $pets = App\Models\Pet::all();
+    //var_dump($pets->toArray());
     dd($pets->toArray());
 });
 
-Route::get('/challenge/users', function () {
+Route::get('/challenge/users', function() {
     $users = User::limit(20)->get();
-    $code = "<div style='margin: 2rem; font-family: \"Segoe UI\", Tahoma, Geneva, Verdana, sans-serif'>
-        <h2 style='color: #2c3e50; text-align: center; margin-bottom: 1.5rem'>User List</h2>
-        <table style='border-collapse: collapse; margin: 0 auto; width: 90%; max-width: 1200px; box-shadow: 0 0 20px rgba(0,0,0,0.1)'>
-            <thead>
-                <tr style='background-color: #3498db; color: white;'>
-                    <th style='padding: 15px; text-align: left; border-bottom: 2px solid #2980b9'>ID</th>
-                    <th style='padding: 15px; text-align: left; border-bottom: 2px solid #2980b9'>Full Name</th>
-                    <th style='padding: 15px; text-align: left; border-bottom: 2px solid #2980b9'>Age</th>
-                    <th style='padding: 15px; text-align: left; border-bottom: 2px solid #2980b9'>Created At</th>
-                </tr>
-            </thead>
-            <tbody>";
-
-    foreach ($users as $user) {
-        $age = Carbon::parse($user->birthdate)->age;
-        $rowColor = $user->id % 2 ? '#f8f9fa' : '#ffffff';
-        $code .= "<tr style='background-color: {$rowColor}; transition: background-color 0.3s ease;'>
-                    <td style='padding: 12px 15px; border-bottom: 1px solid #ecf0f1'>{$user->id}</td>
-                    <td style='padding: 12px 15px; border-bottom: 1px solid #ecf0f1'>{$user->fullname}</td>
-                    <td style='padding: 12px 15px; border-bottom: 1px solid #ecf0f1'>{$age} years</td>
-                    <td style='padding: 12px 15px; border-bottom: 1px solid #ecf0f1'>{$user->created_at->diffForHumans()}</td>
+    //dd($users->toArray());
+    $code = "<table style='border-collapse: collapse; margin: 2rem auto; font-family: Arial'>
+                <tr>
+                    <th style='background: gray; color: white; padding: 0.4rem'>Id</th>
+                    <th style='background: gray; color: white; padding: 0.4rem'>Fullname</th>
+                    <th style='background: gray; color: white; padding: 0.4rem'>Age</th>
+                    <th style='background: gray; color: white; padding: 0.4rem'>Created At</th>
                 </tr>";
+    foreach($users as $user) {
+        $code .= ($user->id%2 == 0) ? "<tr style='background: #ddd'>" : "<tr>";
+        $code .=    "<td style='border: 1px solid gray; padding: 0.4rem'>".$user->id."</td>";
+        $code .=    "<td style='border: 1px solid gray; padding: 0.4rem'>".$user->fullname."</td>";
+        $code .=    "<td style='border: 1px solid gray; padding: 0.4rem'>".Carbon\Carbon::parse($user->birthdate)->age." years old</td>";
+        $code .=    "<td style='border: 1px solid gray; padding: 0.4rem'>".$user->created_at->diffForHumans()."</td>";
+        $code .= "</tr>";
     }
-
-    $code .= "</tbody>
-        </table>
-        <p style='text-align: center; margin-top: 1rem; color: #7f8c8d'>Showing {$users->count()} users</p>
-    </div>";
-    
     return $code . "</table>";
 });
 
-Route::get('view/blade', function () {
-    $title = "Examples Blade";
-    $pets = App\Models\Pet::wherein('kind', ['dog', 'cat'])->get();
-    return view('example-view')
-        ->with('title', $title)
-        ->with('pets', $pets);
-        
-}); 
 
-Route::get('show/pet/id/{id}', function ($id) {
-    $pet = App\Models\Pet::find($id);
+Route::get('view/blade', function() {
+    $title = "Examples Blade";
+    $pets  = App\Models\Pet::whereIn('kind', ['dog', 'cat'])->get();
+
+    return view('example-view')
+         ->with('title', $title)
+         ->with('pets', $pets);
+});
+
+
+Route::get('show/pet/{id}', function() {
+    $pet = App\Models\Pet::find(request()->id);
+    //dd($pet->toArray());
     return view('show-pet')->with('pet', $pet);
 });
 
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
+Route::get('/dashboard', function (Request $request) {
+
+    if (Auth::user()->role == 'Admin') {
+        return view('dashboard-admin');
+    } else if (Auth::user()->role == 'Customer') {
+        return view('dashboard-customer');
+    } else {
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->back()->with('error', 'Role no exist!');
+    }
+    
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::resources([
+        'users'     => UserController::class,
+        //'pets'      => PetController::class,
+        //'adoptions' => UserController::class,
+    ]);
+    
 });
 
 require __DIR__.'/auth.php';

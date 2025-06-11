@@ -3,8 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Models\Pet;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Pet;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,22 +14,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Llamar a los seeders específicos
+        // Seeders
         $this->call([
             UserSeeder::class,
-            PetSeeder::class,
+            PetSeeder::class
         ]);
-
-        // Crear 1000 mascotas usando el factory de Pet
-        Pet::factory(1000)->create();
-
-        // Crear 50 usuarios usando el factory de User
-        User::factory(50)->create();
-
-        // Opcional: Crear un usuario específico para pruebas
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        // Factories
+        Pet::factory(100)->create();
+        User::factory(25)->create();
     }
 }

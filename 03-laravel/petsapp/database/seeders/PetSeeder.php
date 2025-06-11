@@ -14,35 +14,34 @@ class PetSeeder extends Seeder
     public function run(): void
     {
         DB::table('pets')->insert([
-            'name' => 'Firulais',
-            'kind' => 'dog',
-            'weight' => 16, 
-            'age' => 24,    
-            'breed' => 'Shiba Inu',
-            'location' => 'Kioto',
-            'description' => 'The Shiba Inu is a dog breed originating from Japan, known for its fox-like appearance and independent, alert temperament.',
-            'created_at' => now(),
+            'name'        => 'Firulais',
+            'kind'        => 'Dog',
+            'weight'      => '16',
+            'age'         => '24',
+            'breed'       => 'Shiba Inu',
+            'location'    => 'Kioto',
+            'description' => 'Agile Japanese breed known for its fox-like appearance, spirited personality, and thick double coat',
+            'created_at'  => now()
         ]);
         DB::table('pets')->insert([
-            'name' => 'Michi',
-            'kind' => 'cat',
-            'weight' => 4, 
-            'age' => 3,    
-            'breed' => 'Siames',
-            'location' => 'Osaka',
-            'description' => 'The Siamese cat is a sleek and elegant breed known for its striking blue almond-shaped eyes, short coat, and distinctive color points on its ears, face, paws, and tail.',
-            'created_at' => now(),
+            'name'        => 'Michi',
+            'kind'        => 'Cat',
+            'weight'      => '4',
+            'age'         => '18',
+            'breed'       => 'Siamés',
+            'location'    => 'Osaka',
+            'description' => 'Sleek, vocal breed with striking blue eyes, a short coat, and distinctive color points on ears, face, paws, and tail.',
+            'created_at'  => now()
         ]);
         DB::table('pets')->insert([
-            'name' => 'Killer',
-            'kind' => 'Dog',
-            'weight' => 5, 
-            'age' => 48,    
-            'breed' => 'French Poodle',
-            'location' => 'Tokyo',
-            'description' => 'The French Poodle, often simply called the Poodle, is an elegant and highly intelligent dog breed known for its distinctive curly or corded coat and graceful demeanor.',
-            'created_at' => now(),
+            'name'        => 'Killer',
+            'kind'        => 'Dog',
+            'weight'      => '5',
+            'age'         => '48',
+            'breed'       => 'French Poodle',
+            'location'    => 'Tokio',
+            'description' => 'Intelligent, elegant breed known for its curly coat, playful nature, and versatility in various dog sports',
+            'created_at'  => now()
         ]);
-        
     }
 }
